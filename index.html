@@ -3,9 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
     <title>SL Enterprises</title>
-    <link rel="icon" type="image/svg+xml" style="width:20px; height:20px; " href="/sl logo.png" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      style="width: 20px; height: 20px"
+      href="/sl logo.png"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -38,22 +42,14 @@
     <style>
       body {
         font-family: "Noto Sans Devanagari", "Poppins", sans-serif;
-        background-color: #e5e7eb; /* gray-200 */
+        background-color: #5cbbff; /* gray-200 */
       }
 
       #invoice-container {
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
           0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        max-width: 550px;
         transition: background 0.3s ease-in-out;
         position: relative;
-      }
-
-      .dashed-border {
-        border-top: 2px dashed var(--border-color);
-        margin-top: 1.25rem;
-        margin-bottom: 1.25rem;
-        transition: border-color 0.3s ease-in-out;
       }
 
       [contenteditable="true"] {
@@ -114,11 +110,11 @@
       }
 
       .thank-you-text {
-        font-size: 2.5rem;
         color: var(--primary-color);
         opacity: 0.85;
         transition: color 0.3s ease-in-out;
         font-weight: 600;
+        font-family: "Palanquin Dark", sans-serif;
       }
 
       #client-presets {
@@ -212,40 +208,18 @@
       #invoice-date:focus {
         outline: none;
       }
-      /* Style the date input to match text */
+
       input[type="date"]::-webkit-calendar-picker-indicator {
         filter: invert(0.5);
         cursor: pointer;
       }
-      .logo {
-        height: 90px;
-        width: 90px;
-      }
-      .signature {
-        height: 120px;
-        width: 120px;
-      }
-      .paid {
-        height: 50px;
-        width: 50px;
-      }
-      .para{
-        margin-top: -35px;
-        font-size: 15px;
-      }
-      .head{
-        margin-top: -27px;
-      }
-      p{
-        color: rgb(45, 45, 45);
-      }
+
      
 
       .palanquin-dark-regular {
         font-family: "Palanquin Dark", sans-serif;
         font-weight: 600;
         font-style: normal;
-        font-size: 40px;
       }
 
       .yantramanav-light {
@@ -254,10 +228,25 @@
         font-style: normal;
         color: gray;
       }
+
+      @media print {
+        body {
+          background-color: #ffffff;
+        }
+        .no-print {
+          display: none !important;
+        }
+        #invoice-container {
+          box-shadow: none;
+          margin: 0;
+          max-width: 100%;
+          border: 1px solid #eee;
+        }
+      }
     </style>
   </head>
   <body
-    class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6"
+    class="flex flex-col items-center justify-center min-h-screen p-2 sm:p-6"
   >
     <div
       id="theme-selector"
@@ -376,95 +365,105 @@
       </div>
     </div>
 
-    <div id="invoice-container" class="bg-white p-8 rounded-lg w-full">
+    <div
+      id="invoice-container"
+      class="bg-white p-4 sm:p-8 rounded-lg w-full max-w-2xl"
+    >
       <header class="flex flex-col items-center text-center mb-6">
         <div class="mb-4">
-          <img src="sl.png" alt="Company Logo" class="logo object-contain" />
+          <img
+            src="sl.png"
+            alt="Company Logo"
+            class="object-contain w-20 h-20 sm:w-24 sm:h-24"
+          />
         </div>
 
-        <div class="head">
-          <h1
+      <div class="-mt-4 sm:-mt-6">
+  <h1
+    contenteditable="true"
+    class="palanquin-dark-regular text-3xl sm:text-4xl primary-text"
+  >
+    एस एल इन्टरप्राइजेस
+  </h1>
+
+  <p 
+    contenteditable="true"
+    class="yantramanav-light text-xs sm:text-sm mt-2" >
+    सावकार चौक, टावर लाईन, सिध्दीविनायक ज्युनिअर कॉलेज के सामने, मोरे
+    वस्ती, चिखली, पुणे - 411062. मो. 7020000722
+  </p>
+</div>
+
+        <div class="w-full border-t-2 border-dashed border-gray-300 my-4"></div>
+
+        <div class="-mt-4 sm:-mt-5">
+          <p
             contenteditable="true"
-            class="palanquin-dark-regular"
-            class="text-4xl font-bold primary-text"
+            class="yantramanav-light text-xs sm:text-sm"
           >
-            एस एल इन्टरप्राइजेस
-          </h1>
-          
-           <p contenteditable="true" class="yramanav-light">
-            सावकार चौक, टावर लाईन, सिध्दीविनायक ज्युनिअर कॉलेज के सामने, मोरे
-            वस्ती, चिखली, पुणे - 411062. मो. 7020000722
-          </p>
-        </div>
-        <div class="dashed-border"></div>
-
-        <!-- <div class="dashed-border"></div> -->
-        <div class="para">
-         
-         
-          <p contenteditable="true" class="yramanav-light">
             जुना दो नया लो, सेकंड हॅन्ड मोबाईल विक्री, मोबाईल ऍक्सेसरीज, अर्जेंट
             मोबाईल रिपेरिंग सेंटर, हार्डवेअर, सॉफ्टवेअर, ग्लास चेंज
           </p>
         </div>
-        <!-- Address and Phone Section -->
-        <!-- <div class="text-center border-t-2 border-dashed var(--border-color) pt-4 mt-4">
-                    
-                </div> -->
       </header>
 
       <main>
-        <div class="dashed-border"></div>
-        <div class="flex justify-between items-start mb-6">
-          <div class="w-2/3 pr-4 space-y-1">
+        <div class="w-full border-t-2 border-dashed border-gray-300 my-4"></div>
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4 sm:gap-0"
+        >
+          <div class="w-full sm:w-2/3 sm:pr-4 space-y-1">
             <div class="flex items-baseline">
               <label
                 for="invoice-to-name"
-                class="text-level-2 whitespace-nowrap"
+                class="text-level-2 whitespace-nowrap text-sm"
                 >नाव:</label
               >
+
               <input
                 type="text"
                 id="invoice-to-name"
                 placeholder="ग्राहक का नाम"
-                class="ml-2 font-semibold text-level-1 placeholder-input"
+                class="ml-2 font-semibold text-level-1 placeholder-input text-sm"
               />
             </div>
             <div class="flex items-baseline">
               <label
                 for="invoice-to-address"
-                class="text-level-2 whitespace-nowrap"
+                class="text-level-2 whitespace-nowrap text-sm"
                 >पता:</label
               >
               <input
                 type="text"
                 id="invoice-to-address"
                 placeholder="ग्राहक का पता"
-                class="ml-2 font-semibold text-level-1 placeholder-input"
+                class="ml-2 font-semibold text-level-1 placeholder-input text-sm"
               />
             </div>
             <div class="flex items-baseline">
               <label
-                for="invoice-to-address"
-                class="text-level-2 whitespace-nowrap"
+                for="invoice-to-mobile"
+                class="text-level-2 whitespace-nowrap text-sm"
                 >मोबाइल नंबर:</label
               >
               <input
                 type="text"
-                id="invoice-to-address"
+                id="invoice-to-mobile"
                 placeholder="ग्राहक मोबाइल नंबर"
-                class="ml-2 font-semibold text-level-1 placeholder-input"
+                class="ml-2 font-semibold text-level-1 placeholder-input text-sm"
               />
             </div>
           </div>
-          <div class="text-right text-level-2 space-y-1 text-sm">
+          <div
+            class="w-full sm:w-auto text-left sm:text-right text-level-2 space-y-1 text-sm"
+          >
             <p>
               बिल नं.:
               <span contenteditable="true" class="font-semibold text-level-1"
                 >#0001</span
               >
             </p>
-            <div class="flex justify-end items-center">
+            <div class="flex sm:justify-end items-center">
               <label for="invoice-date">दिनांक:</label>
               <input
                 type="date"
@@ -475,11 +474,11 @@
           </div>
         </div>
 
-        <table id="invoice-items" class="w-full text-left">
+        <table id="invoice-items" class="w-full text-left text-sm">
           <thead>
             <tr class="header-highlight">
-              <th class="table-header w-16 text-center">अ.क्र.</th>
-              <th class="table-header w-1/2">तपशील</th>
+              <th class="table-header w-[15%] sm:w-16 text-center">अ.क्र.</th>
+              <th class="table-header w-[45%] sm:w-1/2">तपशील</th>
               <th class="table-header text-center">दर</th>
               <th class="table-header text-right">रक्कम</th>
             </tr>
@@ -496,14 +495,18 @@
           </button>
         </div>
 
-        <div class="dashed-border"></div>
+        <div class="w-full border-t-2 border-dashed border-gray-300 my-4"></div>
 
-        <div class="flex justify-between items-center mt-6">
-          <div class="w-1/2 flex justify-center items-center">
-            <p class="thank-you-text"></p>
+        <div
+          class="flex flex-col-reverse sm:flex-row justify-between items-center mt-6"
+        >
+          <div
+            class="w-full sm:w-1/2 flex justify-center items-center mt-6 sm:mt-0"
+          >
+            <p class="thank-you-text text-4xl sm:text-5xl"></p>
           </div>
 
-          <div class="w-1/2 text-level-2 text-sm space-y-2">
+          <div class="w-full sm:w-1/2 text-level-2 text-sm space-y-2">
             <div class="relative py-2">
               <div class="flex justify-between font-bold text-lg text-level-1">
                 <span>एकूण:</span>
@@ -517,18 +520,18 @@
                 <img
                   src="paid.png"
                   alt="Paid"
-                  class="signature object-contain paid w-24"
+                  class="object-contain w-20 sm:w-24"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <div class="dashed-border mt-8"></div>
+        <div class="w-full border-t-2 border-dashed border-gray-300 mt-8"></div>
         <footer class="pt-4 text-level-2 text-xs">
           <!-- Signature Section -->
           <div class="flex justify-end mb-4">
-            <div class="w-1/2 text-right">
+            <div class="w-full sm:w-1/2 text-right">
               <div
                 style="margin-bottom: -23px"
                 class="h-20 flex flex-col justify-end items-end"
@@ -536,7 +539,7 @@
                 <img
                   src="signature.png"
                   alt="Signature"
-                  class="signature object-contain"
+                  class="object-contain w-28 sm:w-32"
                 />
               </div>
               <div class="border-t-2 border-dashed border-gray-400 mt-2">
@@ -550,22 +553,24 @@
       </main>
     </div>
 
-    <div class="mt-8 text-center flex flex-wrap justify-center gap-4 no-print">
+    <div
+      class="mt-8 text-center flex flex-wrap justify-center gap-2 sm:gap-4 no-print"
+    >
       <button
         id="toggle-stamp-btn"
-        class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
+        class="bg-blue-600 text-white font-bold py-2 px-4 sm:px-6 rounded-lg shadow-lg hover:bg-blue-700 transition-colors text-sm"
       >
         भुगतान स्टाम्प टॉगल करें
       </button>
       <button
         id="upload-excel-btn"
-        class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-green-700 transition-colors"
+        class="bg-green-600 text-white font-bold py-2 px-4 sm:px-6 rounded-lg shadow-lg hover:bg-green-700 transition-colors text-sm"
       >
         एक्सेल अपलोड करें
       </button>
       <button
         id="download-pdf-btn"
-        class="btn-themed text-white font-bold py-2 px-6 rounded-lg shadow-lg transition-colors"
+        class="btn-themed text-white font-bold py-2 px-4 sm:px-6 rounded-lg shadow-lg transition-colors text-sm"
       >
         पीडीएफ डाउनलोड करें
       </button>
@@ -579,7 +584,6 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const logo = document.getElementById("logo");
         const addItemBtn = document.getElementById("add-item-btn");
         const itemsTbody = document.querySelector("#invoice-items tbody");
         const downloadPdfBtn = document.getElementById("download-pdf-btn");
@@ -594,6 +598,7 @@
 
         const invoiceToName = document.getElementById("invoice-to-name");
         const invoiceToAddress = document.getElementById("invoice-to-address");
+        const invoiceToMobile = document.getElementById("invoice-to-mobile");
         const invoiceDate = document.getElementById("invoice-date");
         const clientPresets = document.getElementById("client-presets");
         const addClientBtn = document.getElementById("add-client-btn");
@@ -710,19 +715,19 @@
         const createItemRow = (
           item = {
             sr: itemsTbody.children.length + 1,
-            desc: "आइटम का विवरण",
+            desc: "",
             rate: "0.00",
             amount: "0.00",
           }
         ) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-                    <td class="py-2 text-center">${item.sr}</td>
-                    <td contenteditable="true" class="py-2 pl-2">${item.desc}</td>
-                    <td contenteditable="true" class="py-2 text-center">${item.rate}</td>
-                    <td contenteditable="true" class="py-2 text-right pr-2">${item.amount}</td>
-                    <button class="delete-item-btn no-print">×</button>
-                `;
+                        <td class="py-2 text-center">${item.sr}</td>
+                        <td contenteditable="true" class="py-2 pl-2">${item.desc}</td>
+                        <td contenteditable="true" class="py-2 text-center">${item.rate}</td>
+                        <td contenteditable="true" class="py-2 text-right pr-2">${item.amount}</td>
+                        <button class="delete-item-btn no-print">×</button>
+                    `;
           itemsTbody.appendChild(row);
           updateSerialNumbers();
         };
@@ -881,19 +886,21 @@
           const originalShadow = invoiceContainer.style.boxShadow;
           invoiceContainer.style.boxShadow = "none";
 
-          const nameDisplay = document.createElement("span");
-          nameDisplay.textContent =
-            invoiceToName.value || invoiceToName.placeholder;
-          nameDisplay.className = "ml-2 font-semibold text-level-1";
-          invoiceToName.style.display = "none";
-          invoiceToName.parentElement.appendChild(nameDisplay);
+          // Replace inputs with static text for PDF generation
+          const inputsToReplace = [
+            { input: invoiceToName, placeholder: "ग्राहक का नाम" },
+            { input: invoiceToAddress, placeholder: "ग्राहक का पता" },
+            { input: invoiceToMobile, placeholder: "ग्राहक मोबाइल नंबर" },
+          ];
 
-          const addressDisplay = document.createElement("span");
-          addressDisplay.textContent =
-            invoiceToAddress.value || invoiceToAddress.placeholder;
-          addressDisplay.className = "ml-2 font-semibold text-level-1";
-          invoiceToAddress.style.display = "none";
-          invoiceToAddress.parentElement.appendChild(addressDisplay);
+          inputsToReplace.forEach((item) => {
+            const display = document.createElement("span");
+            display.textContent = item.input.value || item.placeholder;
+            display.className = "ml-2 font-semibold text-level-1 text-sm";
+            item.input.style.display = "none";
+            item.input.parentElement.appendChild(display);
+            item.input.displayElement = display; // Store reference to remove later
+          });
 
           const formattedDate = new Date(invoiceDate.value).toLocaleDateString(
             "en-IN",
@@ -906,12 +913,12 @@
           invoiceDate.parentElement.appendChild(dateDisplay);
 
           html2canvas(invoiceContainer, {
-            scale: 2.5,
+            scale: 2.2,
             useCORS: true,
             backgroundColor: null,
           })
             .then((canvas) => {
-              const imgData = canvas.toDataURL("image/jpeg", 0.9);
+              const imgData = canvas.toDataURL("image/jpeg", 1.0);
               const { jsPDF } = window.jspdf;
               const pdf = new jsPDF({
                 orientation: "p",
@@ -937,10 +944,14 @@
               elementsToHide.forEach((el) => (el.style.visibility = "visible"));
               invoiceContainer.style.boxShadow = originalShadow;
 
-              invoiceToName.style.display = "";
-              nameDisplay.remove();
-              invoiceToAddress.style.display = "";
-              addressDisplay.remove();
+              // Restore inputs
+              inputsToReplace.forEach((item) => {
+                item.input.style.display = "";
+                if (item.input.displayElement) {
+                  item.input.displayElement.remove();
+                }
+              });
+
               invoiceDate.style.display = "";
               dateDisplay.remove();
             });
