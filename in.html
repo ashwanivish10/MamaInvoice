@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SL Enterprises</title>
+    <link rel="icon" type="image/svg+xml" style="width:20px; height:20px; " href="/sl logo.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;500;600;700&family=Yantramanav:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;500;600;700&family=Sarala:wght@400;700&family=Yantramanav:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Noto Sans Devanagari", "Poppins", sans-serif;
+        background-color: #e5e7eb; /* gray-200 */
+      }
+
+      #invoice-container {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        max-width: 550px;
+        transition: background 0.3s ease-in-out;
+        position: relative;
+      }
+
+      .dashed-border {
+        border-top: 2px dashed var(--border-color);
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+        transition: border-color 0.3s ease-in-out;
+      }
+
+      [contenteditable="true"] {
+        outline: none;
+        cursor: text;
+      }
+      [contenteditable="true"]:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 2px 4px;
+      }
+
+      .table-header {
+        font-weight: 600;
+        color: var(--text-color-dark);
+        padding: 0.5rem;
+        transition: color 0.3s ease-in-out;
+      }
+
+      .header-highlight {
+        background-color: var(--header-bg-color);
+        transition: background-color 0.3s ease-in-out;
+      }
+
+      #invoice-items tbody tr {
+        position: relative;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      #invoice-items tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      .delete-item-btn {
+        position: absolute;
+        top: 50%;
+        right: 0.25rem;
+        transform: translateY(-50%);
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 1.25rem;
+        line-height: 1;
+        font-weight: bold;
+        color: #ef4444;
+      }
+
+      #invoice-items tbody tr:hover .delete-item-btn {
+        visibility: visible;
+        opacity: 1;
+      }
+      .delete-item-btn:hover {
+        color: #dc2626;
+      }
+
+      .thank-you-text {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        opacity: 0.85;
+        transition: color 0.3s ease-in-out;
+        font-weight: 600;
+      }
+
+      #client-presets {
+        color: #4b5563;
+        background-color: #f9fafb;
+        padding: 2px 4px;
+      }
+
+      :root {
+        --primary-color: #000000;
+        --text-color-dark: #1f2937;
+        --text-color-medium: #4b5563;
+        --text-color-light: #6b7280;
+        --border-color: #d1d5db;
+        --header-bg-color: #f9fafb;
+      }
+
+      .primary-text {
+        color: var(--primary-color);
+        transition: color 0.3s ease-in-out;
+      }
+      .text-level-1 {
+        color: var(--text-color-dark);
+        transition: color 0.3s ease-in-out;
+      }
+      .text-level-2 {
+        color: var(--text-color-medium);
+        transition: color 0.3s ease-in-out;
+      }
+      .text-level-3 {
+        color: var(--text-color-light);
+        transition: color 0.3s ease-in-out;
+      }
+
+      .theme-btn {
+        border: 2px solid #e5e7eb;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .theme-btn:hover {
+        transform: scale(1.15);
+      }
+      .theme-btn.premium .star-icon,
+      .theme-btn.curated .star-icon {
+        display: block;
+      }
+      .star-icon {
+        display: none;
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 12px;
+        height: 12px;
+        color: #f59e0b;
+      }
+
+      .btn-themed {
+        background-color: var(--primary-color);
+        transition: filter 0.2s ease-in-out, background-color 0.3s;
+      }
+      .btn-themed:hover {
+        filter: brightness(0.9);
+      }
+
+      .placeholder-input {
+        background-color: transparent;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+      }
+      .placeholder-input:focus {
+        outline: none;
+        box-shadow: none;
+        --tw-ring-color: transparent;
+      }
+      .placeholder-input::placeholder {
+        color: var(--text-color-light);
+        opacity: 0.8;
+      }
+
+      #invoice-date {
+        color: var(--text-color-dark);
+        background-color: transparent;
+        border: none;
+        padding: 0.25rem;
+        text-align: right;
+      }
+      #invoice-date:focus {
+        outline: none;
+      }
+      /* Style the date input to match text */
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(0.5);
+        cursor: pointer;
+      }
+      .logo {
+        height: 90px;
+        width: 90px;
+      }
+      .signature {
+        height: 120px;
+        width: 120px;
+      }
+      .paid {
+        height: 50px;
+        width: 50px;
+      }
+      .para{
+        margin-top: -35px;
+        font-size: 15px;
+      }
+      .head{
+        margin-top: -27px;
+      }
+      p{
+        color: rgb(45, 45, 45);
+      }
+     
+
+      .palanquin-dark-regular {
+        font-family: "Palanquin Dark", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+        font-size: 40px;
+      }
+
+      .yantramanav-light {
+        font-family: "Yantramanav", sans-serif;
+        font-weight: 300;
+        font-style: normal;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body
+    class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6"
+  >
+    <div
+      id="theme-selector"
+      class="mb-6 flex flex-col justify-center items-center space-y-3 no-print p-3 bg-white rounded-lg shadow-sm"
+    >
+      <div>
+        <span class="text-xs font-medium text-gray-500 mr-2"
+          >Basic Themes:</span
+        >
+        <button
+          class="theme-btn w-6 h-6 rounded-full"
+          data-theme="default"
+          style="background-color: #f59e0b"
+        ></button>
+        <button
+          class="theme-btn w-6 h-6 rounded-full"
+          data-theme="blue"
+          style="background-color: #2563eb"
+        ></button>
+        <button
+          class="theme-btn w-6 h-6 rounded-full"
+          data-theme="green"
+          style="background-color: #16a34a"
+        ></button>
+        <button
+          class="theme-btn w-6 h-6 rounded-full"
+          data-theme="purple"
+          style="background-color: #4f46e5"
+        ></button>
+      </div>
+      <div class="border-t w-full pt-3">
+        <span class="text-xs font-medium text-gray-500 mr-2"
+          >Premium (Dark) Themes:</span
+        >
+        <button
+          class="theme-btn premium w-6 h-6 rounded-full"
+          data-theme="slate"
+          style="background-color: #374151"
+        >
+          <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
+            />
+          </svg>
+        </button>
+        <button
+          class="theme-btn premium w-6 h-6 rounded-full"
+          data-theme="ocean"
+          style="background-color: #0c4a6e"
+        >
+          <svg class="star-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="client-selector-container"
+      class="mb-4 flex justify-center items-center space-x-2 no-print p-3 bg-white rounded-lg shadow-sm max-w-md w-full"
+    >
+      <span class="text-sm font-medium text-gray-600">ग्राहक प्रीसेट:</span>
+      <div class="flex items-center space-x-1">
+        <select
+          id="client-presets"
+          class="text-sm rounded border-gray-300 shadow-sm"
+          title="Select a client"
+        ></select>
+        <button id="add-client-btn" title="नया ग्राहक जोड़ें">
+          <svg
+            class="w-5 h-5 text-blue-500 hover:text-blue-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </button>
+        <button id="save-client-btn" title="वर्तमान ग्राहक सहेजें">
+          <svg
+            class="w-5 h-5 text-green-500 hover:text-green-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+            ></path>
+          </svg>
+        </button>
+        <button id="delete-client-btn" title="चयनित ग्राहक हटाएं">
+          <svg
+            class="w-5 h-5 text-red-500 hover:text-red-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="invoice-container" class="bg-white p-8 rounded-lg w-full">
+      <header class="flex flex-col items-center text-center mb-6">
+        <div class="mb-4">
+          <img src="sl.png" alt="Company Logo" class="logo object-contain" />
+        </div>
+
+        <div class="head">
+          <h1
+            contenteditable="true"
+            class="palanquin-dark-regular"
+            class="text-4xl font-bold primary-text"
+          >
+            एस एल इन्टरप्राइजेस
+          </h1>
+          
+           <p contenteditable="true" class="yramanav-light">
+            सावकार चौक, टावर लाईन, सिध्दीविनायक ज्युनिअर कॉलेज के सामने, मोरे
+            वस्ती, चिखली, पुणे - 411062. मो. 7020000722
+          </p>
+        </div>
+        <div class="dashed-border"></div>
+
+        <!-- <div class="dashed-border"></div> -->
+        <div class="para">
+         
+         
+          <p contenteditable="true" class="yramanav-light">
+            जुना दो नया लो, सेकंड हॅन्ड मोबाईल विक्री, मोबाईल ऍक्सेसरीज, अर्जेंट
+            मोबाईल रिपेरिंग सेंटर, हार्डवेअर, सॉफ्टवेअर, ग्लास चेंज
+          </p>
+        </div>
+        <!-- Address and Phone Section -->
+        <!-- <div class="text-center border-t-2 border-dashed var(--border-color) pt-4 mt-4">
+                    
+                </div> -->
+      </header>
+
+      <main>
+        <div class="dashed-border"></div>
+        <div class="flex justify-between items-start mb-6">
+          <div class="w-2/3 pr-4 space-y-1">
+            <div class="flex items-baseline">
+              <label
+                for="invoice-to-name"
+                class="text-level-2 whitespace-nowrap"
+                >नाव:</label
+              >
+              <input
+                type="text"
+                id="invoice-to-name"
+                placeholder="ग्राहक का नाम"
+                class="ml-2 font-semibold text-level-1 placeholder-input"
+              />
+            </div>
+            <div class="flex items-baseline">
+              <label
+                for="invoice-to-address"
+                class="text-level-2 whitespace-nowrap"
+                >पता:</label
+              >
+              <input
+                type="text"
+                id="invoice-to-address"
+                placeholder="ग्राहक का पता"
+                class="ml-2 font-semibold text-level-1 placeholder-input"
+              />
+            </div>
+            <div class="flex items-baseline">
+              <label
+                for="invoice-to-address"
+                class="text-level-2 whitespace-nowrap"
+                >मोबाइल नंबर:</label
+              >
+              <input
+                type="text"
+                id="invoice-to-address"
+                placeholder="ग्राहक मोबाइल नंबर"
+                class="ml-2 font-semibold text-level-1 placeholder-input"
+              />
+            </div>
+          </div>
+          <div class="text-right text-level-2 space-y-1 text-sm">
+            <p>
+              बिल नं.:
+              <span contenteditable="true" class="font-semibold text-level-1"
+                >#0001</span
+              >
+            </p>
+            <div class="flex justify-end items-center">
+              <label for="invoice-date">दिनांक:</label>
+              <input
+                type="date"
+                id="invoice-date"
+                class="font-semibold text-level-1 ml-1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <table id="invoice-items" class="w-full text-left">
+          <thead>
+            <tr class="header-highlight">
+              <th class="table-header w-16 text-center">अ.क्र.</th>
+              <th class="table-header w-1/2">तपशील</th>
+              <th class="table-header text-center">दर</th>
+              <th class="table-header text-right">रक्कम</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="flex justify-start mt-2 no-print">
+          <button
+            id="add-item-btn"
+            class="text-sm text-blue-500 hover:text-blue-700 font-semibold"
+          >
+            + नई आइटम जोड़ें
+          </button>
+        </div>
+
+        <div class="dashed-border"></div>
+
+        <div class="flex justify-between items-center mt-6">
+          <div class="w-1/2 flex justify-center items-center">
+            <p class="thank-you-text"></p>
+          </div>
+
+          <div class="w-1/2 text-level-2 text-sm space-y-2">
+            <div class="relative py-2">
+              <div class="flex justify-between font-bold text-lg text-level-1">
+                <span>एकूण:</span>
+                <span id="total-amount">₹0.00</span>
+              </div>
+
+              <div
+                id="mini-paid-stamp"
+                class="absolute top-1/2 right-0 -translate-y-1/2 transform -rotate-12 opacity-55 hidden"
+              >
+                <img
+                  src="paid.png"
+                  alt="Paid"
+                  class="signature object-contain paid w-24"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashed-border mt-8"></div>
+        <footer class="pt-4 text-level-2 text-xs">
+          <!-- Signature Section -->
+          <div class="flex justify-end mb-4">
+            <div class="w-1/2 text-right">
+              <div
+                style="margin-bottom: -23px"
+                class="h-20 flex flex-col justify-end items-end"
+              >
+                <img
+                  src="signature.png"
+                  alt="Signature"
+                  class="signature object-contain"
+                />
+              </div>
+              <div class="border-t-2 border-dashed border-gray-400 mt-2">
+                <p contenteditable="true" class="text-sm font-semibold pt-2">
+                  एस एल एन्टरप्राइजेस करीता
+                </p>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <div class="mt-8 text-center flex flex-wrap justify-center gap-4 no-print">
+      <button
+        id="toggle-stamp-btn"
+        class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
+      >
+        भुगतान स्टाम्प टॉगल करें
+      </button>
+      <button
+        id="upload-excel-btn"
+        class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-green-700 transition-colors"
+      >
+        एक्सेल अपलोड करें
+      </button>
+      <button
+        id="download-pdf-btn"
+        class="btn-themed text-white font-bold py-2 px-6 rounded-lg shadow-lg transition-colors"
+      >
+        पीडीएफ डाउनलोड करें
+      </button>
+      <input
+        type="file"
+        id="excel-upload"
+        class="hidden"
+        accept=".xlsx, .xls, .csv"
+      />
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const logo = document.getElementById("logo");
+        const addItemBtn = document.getElementById("add-item-btn");
+        const itemsTbody = document.querySelector("#invoice-items tbody");
+        const downloadPdfBtn = document.getElementById("download-pdf-btn");
+        const uploadExcelBtn = document.getElementById("upload-excel-btn");
+        const excelUpload = document.getElementById("excel-upload");
+        const totalAmountSpan = document.getElementById("total-amount");
+        const themeButtons = document.querySelectorAll(".theme-btn");
+        const root = document.documentElement;
+        const invoiceContainer = document.getElementById("invoice-container");
+        const miniPaidStamp = document.getElementById("mini-paid-stamp");
+        const toggleStampBtn = document.getElementById("toggle-stamp-btn");
+
+        const invoiceToName = document.getElementById("invoice-to-name");
+        const invoiceToAddress = document.getElementById("invoice-to-address");
+        const invoiceDate = document.getElementById("invoice-date");
+        const clientPresets = document.getElementById("client-presets");
+        const addClientBtn = document.getElementById("add-client-btn");
+        const saveClientBtn = document.getElementById("save-client-btn");
+        const deleteClientBtn = document.getElementById("delete-client-btn");
+
+        invoiceDate.value = new Date().toISOString().slice(0, 10);
+
+        const themes = {
+          default: {
+            type: "color",
+            pageBg: "white",
+            primary: "#f59e0b",
+            textDark: "#1f2937",
+            textMedium: "#4b5563",
+            textLight: "#6b7280",
+            border: "#d1d5db",
+            headerBg: "#f9fafb",
+          },
+          blue: {
+            type: "color",
+            pageBg: "white",
+            primary: "#2563eb",
+            textDark: "#1f2937",
+            textMedium: "#4b5563",
+            textLight: "#6b7280",
+            border: "#d1d5db",
+            headerBg: "#f9fafb",
+          },
+          green: {
+            type: "color",
+            pageBg: "white",
+            primary: "#16a34a",
+            textDark: "#1f2937",
+            textMedium: "#4b5563",
+            textLight: "#6b7280",
+            border: "#d1d5db",
+            headerBg: "#f9fafb",
+          },
+          purple: {
+            type: "color",
+            pageBg: "white",
+            primary: "#4f46e5",
+            textDark: "#1f2937",
+            textMedium: "#4b5563",
+            textLight: "#6b7280",
+            border: "#d1d5db",
+            headerBg: "#f9fafb",
+          },
+          slate: {
+            type: "color",
+            pageBg: "#374151",
+            primary: "#9ca3af",
+            textDark: "#f9fafb",
+            textMedium: "#d1d5db",
+            textLight: "#9ca3af",
+            border: "#4b5563",
+            headerBg: "#4b5563",
+          },
+          ocean: {
+            type: "color",
+            pageBg: "#0c4a6e",
+            primary: "#7dd3fc",
+            textDark: "#f0f9ff",
+            textMedium: "#e0f2fe",
+            textLight: "#bae6fd",
+            border: "#0369a1",
+            headerBg: "#075985",
+          },
+        };
+
+        themeButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const themeName = button.dataset.theme;
+            const selectedTheme = themes[themeName];
+            if (selectedTheme) {
+              invoiceContainer.style.backgroundColor = selectedTheme.pageBg;
+              root.style.setProperty("--primary-color", selectedTheme.primary);
+              root.style.setProperty(
+                "--text-color-dark",
+                selectedTheme.textDark
+              );
+              root.style.setProperty(
+                "--text-color-medium",
+                selectedTheme.textMedium
+              );
+              root.style.setProperty(
+                "--text-color-light",
+                selectedTheme.textLight
+              );
+              root.style.setProperty("--border-color", selectedTheme.border);
+              root.style.setProperty(
+                "--header-bg-color",
+                selectedTheme.headerBg
+              );
+            }
+          });
+        });
+
+        const updateTotals = () => {
+          let totalAmount = 0;
+          itemsTbody.querySelectorAll("tr").forEach((row) => {
+            const amountCell = row.querySelector("td:nth-child(4)");
+            if (amountCell) {
+              const priceValue = parseFloat(
+                amountCell.textContent.replace("₹", "").trim()
+              );
+              if (!isNaN(priceValue)) totalAmount += priceValue;
+            }
+          });
+          totalAmountSpan.textContent = `₹${totalAmount.toFixed(2)}`;
+        };
+
+        const createItemRow = (
+          item = {
+            sr: itemsTbody.children.length + 1,
+            desc: "आइटम का विवरण",
+            rate: "0.00",
+            amount: "0.00",
+          }
+        ) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td class="py-2 text-center">${item.sr}</td>
+                    <td contenteditable="true" class="py-2 pl-2">${item.desc}</td>
+                    <td contenteditable="true" class="py-2 text-center">${item.rate}</td>
+                    <td contenteditable="true" class="py-2 text-right pr-2">${item.amount}</td>
+                    <button class="delete-item-btn no-print">×</button>
+                `;
+          itemsTbody.appendChild(row);
+          updateSerialNumbers();
+        };
+
+        const updateSerialNumbers = () => {
+          const rows = itemsTbody.querySelectorAll("tr");
+          rows.forEach((row, index) => {
+            row.querySelector("td:first-child").textContent = index + 1;
+          });
+        };
+
+        createItemRow();
+        updateTotals();
+
+        const observer = new MutationObserver(updateTotals);
+        observer.observe(itemsTbody, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        });
+
+        itemsTbody.addEventListener("input", updateTotals);
+
+        itemsTbody.addEventListener("click", (event) => {
+          if (event.target.classList.contains("delete-item-btn")) {
+            event.target.closest("tr").remove();
+            updateSerialNumbers();
+          }
+        });
+
+        addItemBtn.addEventListener("click", () => createItemRow());
+
+        uploadExcelBtn.addEventListener("click", () => excelUpload.click());
+
+        excelUpload.addEventListener("change", (event) => {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
+              const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+              const jsonData = XLSX.utils.sheet_to_json(worksheet);
+              if (jsonData.length === 0)
+                throw new Error("एक्सेल शीट खाली या अमान्य है।");
+              itemsTbody.innerHTML = "";
+              let itemsAdded = 0;
+              jsonData.forEach((item, index) => {
+                const descKey = Object.keys(item).find(
+                  (k) => k.toLowerCase() === "तपशील"
+                );
+                const rateKey = Object.keys(item).find(
+                  (k) => k.toLowerCase() === "दर"
+                );
+                const amountKey = Object.keys(item).find(
+                  (k) => k.toLowerCase() === "रक्कम"
+                );
+                if (!descKey || !rateKey || !amountKey) return;
+                createItemRow({
+                  sr: index + 1,
+                  desc: item[descKey],
+                  rate: item[rateKey],
+                  amount: item[amountKey],
+                });
+                itemsAdded++;
+              });
+              if (itemsAdded === 0) throw new Error("कोई वैध आइटम नहीं मिला।");
+            } catch (error) {
+              alert(error.message);
+            } finally {
+              event.target.value = "";
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        });
+
+        const getClients = () =>
+          JSON.parse(localStorage.getItem("invoiceClients")) || [];
+        const saveClients = (clients) =>
+          localStorage.setItem("invoiceClients", JSON.stringify(clients));
+
+        const populateClients = () => {
+          const clients = getClients();
+          clientPresets.innerHTML =
+            '<option value="" selected disabled>ग्राहक चुनें</option>';
+          clients.forEach((client) => {
+            const option = document.createElement("option");
+            option.value = client;
+            option.textContent = client;
+            clientPresets.appendChild(option);
+          });
+        };
+
+        addClientBtn.addEventListener("click", () => {
+          const newClientName = prompt("नए ग्राहक का नाम दर्ज करें:");
+          if (newClientName && newClientName.trim() !== "") {
+            const trimmedName = newClientName.trim();
+            let clients = getClients();
+            if (!clients.includes(trimmedName)) {
+              clients.push(trimmedName);
+              saveClients(clients);
+              populateClients();
+              clientPresets.value = trimmedName;
+              clientPresets.dispatchEvent(new Event("change"));
+            } else {
+              alert("ग्राहक पहले से मौजूद है।");
+            }
+          }
+        });
+
+        saveClientBtn.addEventListener("click", () => {
+          const clientName = invoiceToName.value.trim();
+          if (!clientName) {
+            alert("कृपया एक वैध ग्राहक नाम दर्ज करें।");
+            return;
+          }
+          let clients = getClients();
+          if (!clients.includes(clientName)) {
+            clients.push(clientName);
+            saveClients(clients);
+            populateClients();
+            clientPresets.value = clientName;
+          }
+        });
+
+        deleteClientBtn.addEventListener("click", () => {
+          const clientNameToDelete = clientPresets.value;
+          if (!clientNameToDelete) return;
+          let clients = getClients();
+          clients = clients.filter((client) => client !== clientNameToDelete);
+          saveClients(clients);
+          populateClients();
+          if (invoiceToName.value.trim() === clientNameToDelete) {
+            invoiceToName.value = "";
+          }
+        });
+
+        clientPresets.addEventListener("change", () => {
+          if (clientPresets.value) {
+            invoiceToName.value = clientPresets.value;
+          }
+        });
+
+        toggleStampBtn.addEventListener("click", () => {
+          miniPaidStamp.classList.toggle("hidden");
+        });
+
+        downloadPdfBtn.addEventListener("click", () => {
+          const filename = `invoice_to_${
+            invoiceToName.value.trim() || "invoice"
+          }.pdf`;
+          const elementsToHide = document.querySelectorAll(".no-print");
+
+          elementsToHide.forEach((el) => (el.style.visibility = "hidden"));
+          const originalShadow = invoiceContainer.style.boxShadow;
+          invoiceContainer.style.boxShadow = "none";
+
+          const nameDisplay = document.createElement("span");
+          nameDisplay.textContent =
+            invoiceToName.value || invoiceToName.placeholder;
+          nameDisplay.className = "ml-2 font-semibold text-level-1";
+          invoiceToName.style.display = "none";
+          invoiceToName.parentElement.appendChild(nameDisplay);
+
+          const addressDisplay = document.createElement("span");
+          addressDisplay.textContent =
+            invoiceToAddress.value || invoiceToAddress.placeholder;
+          addressDisplay.className = "ml-2 font-semibold text-level-1";
+          invoiceToAddress.style.display = "none";
+          invoiceToAddress.parentElement.appendChild(addressDisplay);
+
+          const formattedDate = new Date(invoiceDate.value).toLocaleDateString(
+            "en-IN",
+            { day: "2-digit", month: "2-digit", year: "numeric" }
+          );
+          const dateDisplay = document.createElement("span");
+          dateDisplay.textContent = formattedDate;
+          dateDisplay.className = "font-semibold text-level-1 ml-1";
+          invoiceDate.style.display = "none";
+          invoiceDate.parentElement.appendChild(dateDisplay);
+
+          html2canvas(invoiceContainer, {
+            scale: 2.5,
+            useCORS: true,
+            backgroundColor: null,
+          })
+            .then((canvas) => {
+              const imgData = canvas.toDataURL("image/jpeg", 0.9);
+              const { jsPDF } = window.jspdf;
+              const pdf = new jsPDF({
+                orientation: "p",
+                unit: "px",
+                format: [canvas.width, canvas.height],
+              });
+              pdf.addImage(
+                imgData,
+                "JPEG",
+                0,
+                0,
+                canvas.width,
+                canvas.height,
+                undefined,
+                "FAST"
+              );
+              pdf.save(filename);
+            })
+            .catch((err) => {
+              console.error("पीडीएफ बनाने में त्रुटि:", err);
+            })
+            .finally(() => {
+              elementsToHide.forEach((el) => (el.style.visibility = "visible"));
+              invoiceContainer.style.boxShadow = originalShadow;
+
+              invoiceToName.style.display = "";
+              nameDisplay.remove();
+              invoiceToAddress.style.display = "";
+              addressDisplay.remove();
+              invoiceDate.style.display = "";
+              dateDisplay.remove();
+            });
+        });
+
+        populateClients();
+      });
+    </script>
+  </body>
+</html>
